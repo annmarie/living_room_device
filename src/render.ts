@@ -74,20 +74,10 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
 
   focusTile(focusedIndex);
 
-  // const imgElements = document.querySelectorAll('.tile img');
-  // imgElements.forEach(img => {
-  //   const imgElement = img as HTMLImageElement;
-  //   imgElement.onerror = function () {
-  //     if (this.parentElement) {
-  //       this.parentElement.style.display = 'none';
-  //     }
-  //   };
-  // });
-
   document.addEventListener('keydown', (event) => {
     const tiles = document.querySelectorAll('.tile');
     // trying to get the up and down arrow keys to work
-    //const tilesPerRow = Math.floor(window.innerWidth / 200);
+    //const tilesPerRow = Math.floor(window.innerWidth / 290);
     // For now the up and down arrow keys work like right and left arrow keys
     const tilesPerRow = 1;
 
@@ -114,6 +104,13 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
     } else if (event.ctrlKey && event.key === 'h') {
       event.preventDefault();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (event.key === 'Tab') {
+      event.preventDefault();
+      if (event.shiftKey) {
+        focusedIndex = (focusedIndex - 1 + tiles.length) % tiles.length;
+      } else {
+        focusedIndex = (focusedIndex + 1) % tiles.length;
+      }
     }
 
     focusTile(focusedIndex);
