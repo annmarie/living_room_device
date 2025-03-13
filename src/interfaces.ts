@@ -1,7 +1,9 @@
 export interface HubData {
   name: string;
   components: Collection[];
-  artwork: Artwork;
+  artwork: {
+    'detail.horizontal.hero': Artwork;
+  };
 }
 
 export interface Collection {
@@ -11,9 +13,10 @@ export interface Collection {
 }
 
 export interface Artwork {
-  'detail.horizontal.hero': {
-    path: string;
-  }
+  path: string;
+  accent: {
+    hue: number;
+  };
 }
 
 export interface Item {

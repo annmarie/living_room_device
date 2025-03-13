@@ -18,7 +18,7 @@ function renderListPage() {
       const data = await fetchHubData();
       const collections = data.components;
       const artwork = data.artwork;
-      renderHeader(headElement, data.name, artwork['detail.horizontal.hero'].path);
+      renderHeader(headElement, data.name, artwork['detail.horizontal.hero']);
       renderList(mainElement, collections);
     } catch (error) {
       renderError(mainElement, new Error(`Error fetching hub data: ${error}`));

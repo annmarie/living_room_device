@@ -1,16 +1,18 @@
-import { Collection, Item } from './interfaces';
+import { Artwork, Collection, Item } from './interfaces';
 import { fetchCollectionData } from './api';
 import { showModal, closeModal } from './modal';
 
 let isModalOpen = false;
 
-export function renderHeader(headElement: HTMLElement, title: string, heroImagePath: string) {
+export function renderHeader(headElement: HTMLElement, title: string, artwork: Artwork) {
+  const { path, accent } = artwork;
   headElement.innerHTML = `
-  <div class="header-container">
-    <h1>${title}</h1>
-    <img class="hero-image" src="${heroImagePath}&size=400x200&format=jpeg">
-  </div>
-`;
+    <div class="header">
+      <div class="header-hero" style="background-image: url('${path}&size=400x200&format=jpeg');"></div>
+      <div class="header-color" style="background-color: hsl(${accent.hue} 100% 50%)"></div>
+      <h1 class="header-title">${title}</h1>
+    </div>
+  `;
 }
 
 export async function renderList(mainElement: HTMLElement, collections: Collection[]) {
@@ -34,12 +36,16 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
 
   for (const collection of collections) {
     const collectionDiv = document.createElement('div');
-    collectionDiv.className = 'collection';
+    collectionDiv.classList.add('collection');
     collectionDiv.setAttribute('data-collection-id', collection.id);
-    collectionDiv.innerHTML = `<h2>${collection.name}</h2>`;
+
+    const collectionTitle = document.createElement('h2');
+    collectionTitle.classList.add('collection-title');
+    collectionTitle.textContent = collection.name;
+    collectionDiv.appendChild(collectionTitle);
 
     const tilesContainer = document.createElement('div');
-    tilesContainer.className = 'tiles-container';
+    tilesContainer.classList.add('tiles-container');
     collectionDiv.appendChild(tilesContainer);
     mainElement.appendChild(collectionDiv);
 
@@ -55,9 +61,6 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
 
   document.addEventListener('keydown', (event) => {
     const tiles = document.querySelectorAll('.tile');
-    // trying to get the up and down arrow keys to work
-    //const tilesPerRow = Math.floor(window.innerWidth / 290);
-    // For now the up and down arrow keys work like right and left arrow keys
     const tilesPerRow = 1;
 
     if (event.key === 'ArrowRight') {
@@ -72,11 +75,13 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
       focusedIndex = (focusedIndex - tilesPerRow + tiles.length) % tiles.length;
-    } else if (event.key === ' ') {
+    } else if (event.key === 'Escape') {
       event.preventDefault();
-      const selectedTile = tiles[focusedIndex] as HTMLElement;
-      selectedTile.click();
-    } else if (event.key === 'Enter') {
+      if (isModalOpen) {
+        closeModal();
+        isModalOpen = false;
+      }
+    } else if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       if (isModalOpen) {
         closeModal();
@@ -84,11 +89,7 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
       } else {
         const selectedTile = tiles[focusedIndex] as HTMLElement;
         selectedTile.click();
-        isModalOpen = true;
       }
-    } else if (event.ctrlKey && event.key === 'h') {
-      event.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (event.key === 'Tab') {
       event.preventDefault();
       if (event.shiftKey) {
@@ -105,19 +106,29 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
 function addTilesToContainer(items: Item[], tilesContainer: HTMLDivElement) {
   for (const item of items) {
     const tile = document.createElement('div');
-    tile.className = 'tile';
+    tile.classList.add('tile');
 
+    const imgContainer = document.createElement('div');
     const imgElement = document.createElement('img');
-    imgElement.src = `${item.visuals.artwork.horizontal_tile.image.path}&size=200x200&format=jpeg`;
+    imgContainer.classList.add('tile-image-container');
+    imgElement.src = `${item.visuals.artwork.horizontal_tile.image.path}&size=400x224&format=jpeg`;
     imgElement.alt = item.visuals.artwork.horizontal_tile.image.text;
-    imgElement.width = 180;
-    imgElement.height = 180;
-    tile.appendChild(imgElement);
+    imgElement.classList.add('tile-image');
+    imgContainer.appendChild(imgElement);
+    tile.appendChild(imgContainer);
 
     const { headline, subtitle } = item.visuals;
-    const paragraph = document.createElement('p');
-    paragraph.innerHTML = `${headline && headline} ${subtitle || ''}`;
-    tile.appendChild(paragraph);
+    const textContainer = document.createElement('div');
+    const textHeadline = document.createElement('p');
+    const textSubtitle = document.createElement('p');
+    textContainer.classList.add('tile-text-container');
+    textHeadline.classList.add('tile-headline');
+    textSubtitle.classList.add('tile-subtitle');
+    textHeadline.textContent = headline;
+    textSubtitle.textContent = subtitle;
+    textContainer.appendChild(textHeadline);
+    if (subtitle) textContainer.appendChild(textSubtitle);
+    tile.appendChild(textContainer);
 
     tile.tabIndex = 0;
     tile.addEventListener('click', () => {
@@ -136,9 +147,19 @@ async function focusTile(index: number) {
   });
 
   if (index >= 0 && index < tiles.length) {
-    (tiles[index] as HTMLElement).scrollIntoView({
+    const tile = tiles[index] as HTMLElement;
+    const tileRect = tile.getBoundingClientRect();
+    const absoluteElementTop = tileRect.top + window.pageYOffset;
+    const middle = absoluteElementTop - (window.innerHeight / 2) + (tileRect.height / 2);
+
+    window.scrollTo({
+      top: middle,
       behavior: 'smooth',
-      block: 'nearest',
+    });
+
+    tile.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
       inline: 'center',
     });
   }
