@@ -8,10 +8,6 @@ export function createModal() {
   const modalContent = document.createElement('div');
   modalContent.classList.add('modal-content');
 
-  const closeButton = document.createElement('span');
-  closeButton.classList.add('close-button');
-  closeButton.innerHTML = '&times;';
-
   const titleElement = document.createElement('h2');
   titleElement.id = 'modal-title';
 
@@ -43,16 +39,11 @@ export function createModal() {
   contentContainer.appendChild(leftColumn);
   contentContainer.appendChild(rightColumn);
 
-  modalContent.appendChild(closeButton);
   modalContent.appendChild(contentContainer);
   modalContent.appendChild(actionTextElement);
   modalContent.appendChild(genreNamesElement);
   modal.appendChild(modalContent);
   document.body.appendChild(modal);
-
-  closeButton.onclick = () => {
-    modal.classList.add('hidden');
-  };
 
   window.onclick = (event) => {
     if (event.target === modal) {
@@ -63,7 +54,7 @@ export function createModal() {
 
 export function closeModal() {
   const modal = document.getElementById('modal') as HTMLElement;
-  modal.style.display = 'none';
+  modal.classList.add('hidden');
 }
 
 export function showModal(item: Item) {
@@ -95,7 +86,6 @@ export function showModal(item: Item) {
       imgElement.alt = text;
       actionHrefElement.appendChild(imgElement);
       imgContainerElement.innerHTML = actionHrefElement.outerHTML;
-
     }
 
     actionHrefElement.textContent = subtitle;
@@ -114,6 +104,5 @@ export function showModal(item: Item) {
   }
 
   bodyElement.textContent = body;
-  modal.style.display = '';
   modal.classList.remove('hidden');
 }

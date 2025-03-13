@@ -2,7 +2,8 @@ import { Artwork, Collection, Item } from './interfaces';
 import { fetchCollectionData } from './api';
 import { showModal, closeModal } from './modal';
 
-let isModalOpen = false;
+let isModalOpen: boolean = false;
+let collectionsRowCount: number = 0;
 
 export function renderHeader(headElement: HTMLElement, title: string, artwork: Artwork) {
   const { path, accent } = artwork;
@@ -51,9 +52,6 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
 
     addTilesToContainer(collection.items, tilesContainer);
 
-    collectionDiv.appendChild(tilesContainer);
-    mainElement.appendChild(collectionDiv);
-
     observer.observe(collectionDiv);
   }
 
@@ -61,7 +59,6 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
 
   document.addEventListener('keydown', (event) => {
     const tiles = document.querySelectorAll('.tile');
-    const tilesPerRow = 1;
 
     if (event.key === 'ArrowRight') {
       event.preventDefault();
@@ -71,10 +68,16 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
       focusedIndex = (focusedIndex - 1 + tiles.length) % tiles.length;
     } else if (event.key === 'ArrowDown') {
       event.preventDefault();
-      focusedIndex = (focusedIndex + tilesPerRow) % tiles.length;
+      const nextFirstRowTile = Array.from(tiles).slice(focusedIndex + 1).find(tile => tile.classList.contains('first-row-tile'));
+      if (nextFirstRowTile) {
+        focusedIndex = Array.from(tiles).indexOf(nextFirstRowTile);
+      }
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
-      focusedIndex = (focusedIndex - tilesPerRow + tiles.length) % tiles.length;
+      const previousFirstRowTile = Array.from(tiles).slice(0, focusedIndex).reverse().find(tile => tile.classList.contains('first-row-tile'));
+      if (previousFirstRowTile) {
+        focusedIndex = Array.from(tiles).indexOf(previousFirstRowTile);
+      }
     } else if (event.key === 'Escape') {
       event.preventDefault();
       if (isModalOpen) {
@@ -97,6 +100,13 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
       } else {
         focusedIndex = (focusedIndex + 1) % tiles.length;
       }
+    } else if (event.key === 'h') {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      focusedIndex = 0;
+    } else if (event.key === 'l') {
+      event.preventDefault();
+      focusedIndex = tiles.length - 1;
     }
 
     focusTile(focusedIndex);
@@ -104,9 +114,14 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
 }
 
 function addTilesToContainer(items: Item[], tilesContainer: HTMLDivElement) {
-  for (const item of items) {
+
+  for (const itemIndex in items) {
+    const item = items[itemIndex];
     const tile = document.createElement('div');
     tile.classList.add('tile');
+
+    tile.setAttribute('data-row', collectionsRowCount.toString());
+    tile.setAttribute('data-column', itemIndex);
 
     const imgContainer = document.createElement('div');
     const imgElement = document.createElement('img');
@@ -136,12 +151,20 @@ function addTilesToContainer(items: Item[], tilesContainer: HTMLDivElement) {
       isModalOpen = true;
     });
 
+    if (Number(itemIndex) === items.length - 1) {
+      tile.classList.add('last-row-tile');
+    } else if (Number(itemIndex) === 0) {
+      tile.classList.add('first-row-tile');
+    }
+
     tilesContainer.appendChild(tile);
   }
+  collectionsRowCount++;
 }
 
-async function focusTile(index: number) {
+function focusTile(index: number) {
   const tiles = document.querySelectorAll('.tile');
+
   tiles.forEach((tile, i) => {
     tile.classList.toggle('focused', i === index);
   });
