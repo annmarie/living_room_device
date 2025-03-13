@@ -80,7 +80,6 @@ export function showModal(item: Item) {
     const actionHrefElement = document.createElement('a');
     actionHrefElement.href = actionPath + '?id=' + item.id;
     actionHrefElement.textContent = action_text;
-    actionHrefElement.target = '_blank';
     actionTextElement.innerHTML = actionHrefElement.outerHTML;
   }
 

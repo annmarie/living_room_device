@@ -1,19 +1,9 @@
-/* Hide scrollbars for webkit browsers (Chrome, Safari) */
-::-webkit-scrollbar {
-  display: none;
-}
-
 body {
   font-family: Arial, sans-serif;
   background-color: #000;
   color: #fff;
   margin: 0;
   padding: 20px;
-  /* Hide scrollbars for Firefox */
-  overflow: -moz-scrollbars-none;
-  scrollbar-width: none;
-  /* For other browsers */
-  overflow: hidden;
 }
 
 .collection {
@@ -28,6 +18,9 @@ body {
 .tiles-container {
   display: flex;
   overflow-x: auto;
+  overflow: -moz-scrollbars-none;
+  overflow: hidden;
+  scrollbar-width: none;
   padding: 10px 0;
 }
 

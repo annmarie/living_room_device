@@ -25,7 +25,7 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
           const collection = collections.find(c => c.id === collectionId);
           if (collection && collection.items.length === 0) {
             collection.items = await fetchCollectionData(collectionId);
-            renderCollectionItems(entry.target as HTMLElement, collection.items);
+            addTilesToContainer(collection.items, entry.target.querySelector('.tiles-container') as HTMLDivElement);
           }
         }
       }
@@ -43,33 +43,7 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
     collectionDiv.appendChild(tilesContainer);
     mainElement.appendChild(collectionDiv);
 
-    if (collection.items.length === 0) {
-      collection.items = await fetchCollectionData(collection.id);
-    }
-
-    for (const item of collection.items) {
-      const tile = document.createElement('div');
-      tile.className = 'tile';
-
-      const imgElement = document.createElement('img');
-      imgElement.src = `${item.visuals.artwork.horizontal_tile.image.path}&size=200x200&format=jpeg`;
-      imgElement.alt = item.visuals.artwork.horizontal_tile.image.text;
-      imgElement.width = 180;
-      imgElement.height = 180;
-      tile.appendChild(imgElement);
-
-      const { headline, subtitle } = item.visuals;
-      const paragraph = document.createElement('p');
-      paragraph.innerHTML = `${headline && headline} ${subtitle || ''}`;
-      tile.appendChild(paragraph);
-
-      tile.tabIndex = 0;
-      tile.addEventListener('click', () => {
-        showModal(item);
-        isModalOpen = true;
-      });
-      tilesContainer.appendChild(tile);
-    }
+    addTilesToContainer(collection.items, tilesContainer);
 
     collectionDiv.appendChild(tilesContainer);
     mainElement.appendChild(collectionDiv);
@@ -128,28 +102,25 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
   });
 }
 
-export function renderCollectionItems(container: HTMLElement, items: Item[]) {
-  const tilesContainer = container.querySelector('.tiles-container') as HTMLElement;
-
+function addTilesToContainer(items: Item[], tilesContainer: HTMLDivElement) {
   for (const item of items) {
     const tile = document.createElement('div');
     tile.className = 'tile';
 
     const imgElement = document.createElement('img');
-    const { text, path } = item.visuals.artwork.horizontal_tile.image;
-    if (text && path) {
-      imgElement.src = `${path}&size=180x180&format=jpeg`;
-      imgElement.alt = text;
-      imgElement.width = 180;
-      imgElement.height = 180;
-      tile.appendChild(imgElement);
-    }
+    imgElement.src = `${item.visuals.artwork.horizontal_tile.image.path}&size=200x200&format=jpeg`;
+    imgElement.alt = item.visuals.artwork.horizontal_tile.image.text;
+    imgElement.width = 180;
+    imgElement.height = 180;
+    tile.appendChild(imgElement);
 
     const { headline, subtitle } = item.visuals;
-    tile.innerHTML += `<p>${headline || ''} ${subtitle || ''}</p>`;
+    const paragraph = document.createElement('p');
+    paragraph.innerHTML = `${headline && headline} ${subtitle || ''}`;
+    tile.appendChild(paragraph);
+
     tile.tabIndex = 0;
     tile.addEventListener('click', () => {
-      focusTile(items.indexOf(item));
       showModal(item);
       isModalOpen = true;
     });

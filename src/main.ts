@@ -7,7 +7,7 @@ const mainElement = document.getElementById('main') as HTMLElement;
 
 const urlPath = window.location.pathname.replace(/^\/|\/$/g, '') as string;
 if (['watch', 'browse'].includes(urlPath)) {
-  mainElement.innerHTML = `This is the ${urlPath} page. Currently under construction.`;
+  mainElement.innerHTML = `This is the ${urlPath} page. Currently under construction.<br /><a href="/">Go back to List</a>`;
 } else {
   renderListPage();
 }
