@@ -11,8 +11,8 @@ export function renderHeader(headElement: HTMLElement, title: string, heroImageP
 `;
 }
 
-export async function renderList(appElement: HTMLElement, collections: Collection[]) {
-  appElement.innerHTML = '';
+export async function renderList(mainElement: HTMLElement, collections: Collection[]) {
+  mainElement.innerHTML = '';
   let focusedIndex: number = 0;
 
   const observer = new IntersectionObserver(async (entries) => {
@@ -39,7 +39,7 @@ export async function renderList(appElement: HTMLElement, collections: Collectio
     const tilesContainer = document.createElement('div');
     tilesContainer.className = 'tiles-container';
     collectionDiv.appendChild(tilesContainer);
-    appElement.appendChild(collectionDiv);
+    mainElement.appendChild(collectionDiv);
 
     if (collection.items.length === 0) {
       collection.items = await fetchCollectionData(collection.id);
@@ -48,37 +48,41 @@ export async function renderList(appElement: HTMLElement, collections: Collectio
     for (const item of collection.items) {
       const tile = document.createElement('div');
       tile.className = 'tile';
+
       const imgElement = document.createElement('img');
       imgElement.src = `${item.visuals.artwork.horizontal_tile.image.path}&size=200x200&format=jpeg`;
       imgElement.alt = item.visuals.artwork.horizontal_tile.image.text;
       imgElement.width = 180;
       imgElement.height = 180;
-
       tile.appendChild(imgElement);
+
       const { headline, subtitle } = item.visuals;
-      tile.innerHTML += `<p>${headline && headline} ${subtitle ? subtitle : ''}</p>`;
+      const paragraph = document.createElement('p');
+      paragraph.innerHTML = `${headline && headline} ${subtitle || ''}`;
+      tile.appendChild(paragraph);
+
       tile.tabIndex = 0;
       tile.addEventListener('click', () => showModal(item));
       tilesContainer.appendChild(tile);
     }
 
     collectionDiv.appendChild(tilesContainer);
-    appElement.appendChild(collectionDiv);
+    mainElement.appendChild(collectionDiv);
 
     observer.observe(collectionDiv);
   }
 
   focusTile(focusedIndex);
 
-  const imgElements = document.querySelectorAll('.tile img');
-  imgElements.forEach(img => {
-    const imgElement = img as HTMLImageElement;
-    imgElement.onerror = function () {
-      if (this.parentElement) {
-        this.parentElement.style.display = 'none';
-      }
-    };
-  });
+  // const imgElements = document.querySelectorAll('.tile img');
+  // imgElements.forEach(img => {
+  //   const imgElement = img as HTMLImageElement;
+  //   imgElement.onerror = function () {
+  //     if (this.parentElement) {
+  //       this.parentElement.style.display = 'none';
+  //     }
+  //   };
+  // });
 
   document.addEventListener('keydown', (event) => {
     const tiles = document.querySelectorAll('.tile');
@@ -122,25 +126,30 @@ export function renderCollectionItems(container: HTMLElement, items: Item[]) {
   for (const item of items) {
     const tile = document.createElement('div');
     tile.className = 'tile';
-    const imgElement = document.createElement('img');
-    imgElement.src = `${item.visuals.artwork.horizontal_tile.image.path}&size=200x200&format=jpeg`;
-    imgElement.alt = item.visuals.artwork.horizontal_tile.image.text;
-    imgElement.width = 180;
-    imgElement.height = 180;
 
-    tile.appendChild(imgElement);
+    const imgElement = document.createElement('img');
+    const { text, path } = item.visuals.artwork.horizontal_tile.image;
+    if (text && path) {
+      imgElement.src = `${path}&size=180x180&format=jpeg`;
+      imgElement.alt = text;
+      imgElement.width = 180;
+      imgElement.height = 180;
+      tile.appendChild(imgElement);
+    }
+
     const { headline, subtitle } = item.visuals;
-    tile.innerHTML += `<p>${headline && headline} ${subtitle ? subtitle : ''}</p>`;
+    tile.innerHTML += `<p>${headline || ''} ${subtitle || ''}</p>`;
     tile.tabIndex = 0;
     tile.addEventListener('click', () => {
       focusTile(items.indexOf(item));
       showModal(item)
     });
+
     tilesContainer.appendChild(tile);
   }
 }
 
-export async function focusTile(index: number) {
+async function focusTile(index: number) {
   const tiles = document.querySelectorAll('.tile');
   tiles.forEach((tile, i) => {
     tile.classList.toggle('focused', i === index);
@@ -152,11 +161,9 @@ export async function focusTile(index: number) {
       block: 'nearest',
       inline: 'center',
     });
-
-    await new Promise(resolve => setTimeout(resolve, 300));
   }
 }
 
-export function renderError(appElement: HTMLElement, error: Error) {
-  appElement.innerHTML = `<h1>Error fetching hub data</h1><p>${error.message}</p>`;
+export function renderError(mainElement: HTMLElement, error: Error) {
+  mainElement.innerHTML = `<h1>Error fetching hub data</h1><p>${error.message}</p>`;
 }

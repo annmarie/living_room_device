@@ -25,11 +25,19 @@ export function createModal() {
   const bodyElement = document.createElement('p');
   bodyElement.id = 'modal-body';
 
+  const actionTextElement = document.createElement('p');
+  actionTextElement.id = 'modal-action-text';
+
+  const genreNamesElement = document.createElement('p');
+  genreNamesElement.id = 'modal-genre-names';
+
   modalContent.appendChild(closeButton);
   modalContent.appendChild(titleElement);
   modalContent.appendChild(subtitleElement);
   modalContent.appendChild(bodyElement);
   modalContent.appendChild(imageElement);
+  modalContent.appendChild(actionTextElement);
+  modalContent.appendChild(genreNamesElement);
   modal.appendChild(modalContent);
   document.body.appendChild(modal);
 
@@ -50,18 +58,36 @@ export function showModal(item: Item) {
   const subtitleElement = document.getElementById('modal-subtitle') as HTMLElement;
   const imageElement = document.getElementById('modal-image') as HTMLImageElement;
   const bodyElement = document.getElementById('modal-body') as HTMLElement;
+  const actionTextElement = document.getElementById('modal-action-text') as HTMLElement;
+  const genreNamesElement = document.getElementById('modal-genre-names') as HTMLElement;
 
-  titleElement.textContent = item.visuals.headline;
-  subtitleElement.textContent = item.visuals.subtitle;
+  const { headline, subtitle, body, action_text, artwork } = item.visuals;
+  const { genre_names } = item.entity_metadata;
 
-  const verticalImagePath = item.visuals.artwork.vertical_tile.image.path;
-  if (verticalImagePath) {
-    imageElement.src = `${verticalImagePath}&size=200x300&format=jpeg`;
+  titleElement.textContent = headline;
+  subtitleElement.textContent = subtitle;
+  genreNamesElement.textContent = genre_names.join(', ');
+
+  const actionPath = action_text.toLowerCase().includes('watch') ? '/watch'
+    : action_text.toLowerCase().includes('browse') ? '/browse' : '';
+
+  if (actionPath) {
+    const actionHrefElement = document.createElement('a');
+    actionHrefElement.href = actionPath + '?id=' + item.id;
+    actionHrefElement.textContent = action_text;
+    actionHrefElement.target = '_blank';
+    actionTextElement.innerHTML = actionHrefElement.outerHTML;
+  }
+
+  const { text, path } = artwork.vertical_tile.image;
+  if (path) {
+    imageElement.src = `${path}&size=200x300&format=jpeg`;
+    imageElement.alt = text;
   } else {
     imageElement.style.display = 'none';
   }
 
-  bodyElement.textContent = item.visuals.body;
+  bodyElement.textContent = body;
 
   modal.style.display = 'block';
 }

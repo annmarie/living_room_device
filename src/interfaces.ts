@@ -19,10 +19,14 @@ export interface Artwork {
 export interface Item {
   id: string;
   name: string;
+  entity_metadata: {
+    genre_names: string[];
+  };
   visuals: {
     headline: string;
     subtitle: string;
     body: string;
+    action_text: string;
     artwork: {
       horizontal_tile: {
         image: { path: string, text: string };
