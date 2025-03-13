@@ -1,6 +1,8 @@
 import { Collection, Item } from './interfaces';
 import { fetchCollectionData } from './api';
-import { showModal } from './modal';
+import { showModal, closeModal } from './modal';
+
+let isModalOpen = false;
 
 export function renderHeader(headElement: HTMLElement, title: string, heroImagePath: string) {
   headElement.innerHTML = `
@@ -62,7 +64,10 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
       tile.appendChild(paragraph);
 
       tile.tabIndex = 0;
-      tile.addEventListener('click', () => showModal(item));
+      tile.addEventListener('click', () => {
+        showModal(item);
+        isModalOpen = true;
+      });
       tilesContainer.appendChild(tile);
     }
 
@@ -99,8 +104,14 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
       selectedTile.click();
     } else if (event.key === 'Enter') {
       event.preventDefault();
-      const selectedTile = tiles[focusedIndex] as HTMLElement;
-      selectedTile.click();
+      if (isModalOpen) {
+        closeModal();
+        isModalOpen = false;
+      } else {
+        const selectedTile = tiles[focusedIndex] as HTMLElement;
+        selectedTile.click();
+        isModalOpen = true;
+      }
     } else if (event.ctrlKey && event.key === 'h') {
       event.preventDefault();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -139,7 +150,8 @@ export function renderCollectionItems(container: HTMLElement, items: Item[]) {
     tile.tabIndex = 0;
     tile.addEventListener('click', () => {
       focusTile(items.indexOf(item));
-      showModal(item)
+      showModal(item);
+      isModalOpen = true;
     });
 
     tilesContainer.appendChild(tile);

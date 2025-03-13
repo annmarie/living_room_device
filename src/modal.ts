@@ -52,6 +52,11 @@ export function createModal() {
   };
 }
 
+export function closeModal() {
+  const modal = document.getElementById('modal') as HTMLElement;
+  modal.style.display = 'none';
+}
+
 export function showModal(item: Item) {
   const modal = document.getElementById('modal') as HTMLElement;
   const titleElement = document.getElementById('modal-title') as HTMLElement;
