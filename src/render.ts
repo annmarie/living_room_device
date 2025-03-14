@@ -139,6 +139,7 @@ export async function renderListPage(mainElement: HTMLElement, collections: Coll
       case 'h':
         event.preventDefault();
         scrollToTop();
+        focusedIndex = 0;
         break;
 
       case 'l':
