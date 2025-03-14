@@ -35,6 +35,8 @@ export function renderActionPage(mainElement: HTMLElement, page: string) {
   setInnerHTML(actionMessage,
     `This is the ${page} page. Currently under construction. <a href="/">Go back to List</a>`);
   setInnerHTML(mainElement, actionMessage.outerHTML);
+  const linkElement = document.querySelector('.action-message a') as HTMLAnchorElement;
+  linkElement.focus()
 }
 
 /**
