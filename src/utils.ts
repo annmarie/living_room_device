@@ -63,14 +63,6 @@ export function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-export function getElementById(id: string): HTMLElement {
-  const element = document.getElementById(id);
-  if (!element) {
-    throw new Error(`Element with ID "${id}" not found.`);
-  }
-  return element;
-}
-
 export function setTextContent(element: HTMLElement, text: string) {
   element.textContent = text;
 }

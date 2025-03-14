@@ -1,5 +1,5 @@
 import { Item } from './interfaces';
-import { createActionLink, createImageModalElement, determineActionPath, getElementById, setInnerHTML, setTextContent } from './utils';
+import { createActionLink, createImageModalElement, determineActionPath, setInnerHTML, setTextContent } from './utils';
 
 export function createModal() {
   const modal = document.createElement('div') as HTMLDivElement;
@@ -59,13 +59,13 @@ export function closeModal() {
 }
 
 export function showModal(item: Item) {
-  const modal = getElementById('modal') as HTMLElement;
-  const titleElement = getElementById('modal-title') as HTMLHeadingElement;
-  const subtitleElement = getElementById('modal-subtitle') as HTMLParagraphElement;
-  const imgContainerElement = getElementById('modal-image-container') as HTMLImageElement;
-  const bodyElement = getElementById('modal-body') as HTMLParagraphElement;
-  const actionTextElement = getElementById('modal-action-text') as HTMLParagraphElement;
-  const genreNamesElement = getElementById('modal-genre-names') as HTMLParagraphElement;
+  const modal = document.getElementById('modal') as HTMLElement;
+  const titleElement = document.getElementById('modal-title') as HTMLHeadingElement;
+  const subtitleElement = document.getElementById('modal-subtitle') as HTMLParagraphElement;
+  const imgContainerElement = document.getElementById('modal-image-container') as HTMLImageElement;
+  const bodyElement = document.getElementById('modal-body') as HTMLParagraphElement;
+  const actionTextElement = document.getElementById('modal-action-text') as HTMLParagraphElement;
+  const genreNamesElement = document.getElementById('modal-genre-names') as HTMLParagraphElement;
 
   const { headline, subtitle, body, action_text, artwork } = item.visuals;
   const { genre_names } = item.entity_metadata;
