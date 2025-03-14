@@ -174,8 +174,9 @@ function addTilesToContainer(items: Item[], tilesContainer: HTMLDivElement) {
     const imgContainer = document.createElement('div');
     const imgElement = document.createElement('img');
     imgContainer.classList.add('tile-image-container');
-    imgElement.src = `${item.visuals.artwork.horizontal_tile.image.path}&size=400x224&format=jpeg`;
-    imgElement.alt = item.visuals.artwork.horizontal_tile.image.text;
+    const { path, text } = item.visuals.artwork.horizontal_tile.image;
+    imgElement.src = `${path}&size=400x224&format=jpeg`;
+    imgElement.alt = text;
     imgElement.classList.add('tile-image');
     imgContainer.appendChild(imgElement);
     tile.appendChild(imgContainer);

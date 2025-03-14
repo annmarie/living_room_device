@@ -93,9 +93,9 @@ export function createActionLink(actionPath: string, itemId: string, text?: stri
   return link;
 }
 
-export function createImageModalElement(path: string, altText: string): HTMLImageElement {
+export function createImageModalElement(path: string): HTMLImageElement {
   const img = document.createElement('img');
+  img.classList.add('modal-image');
   img.src = `${path}&size=200x300&format=jpeg`;
-  img.alt = altText;
   return img;
 }

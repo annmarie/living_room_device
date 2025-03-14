@@ -75,13 +75,13 @@ export function showModal(item: Item) {
   setTextContent(bodyElement, body);
 
   const actionPath = determineActionPath(action_text);
-  const { text, path } = artwork.vertical_tile.image;
+  const { path } = artwork.vertical_tile.image;
 
   if (actionPath) {
     const actionHrefElement = createActionLink(actionPath, item.id);
 
     if (path) {
-      const imgElement = createImageModalElement(path, text);
+      const imgElement = createImageModalElement(path);
       actionHrefElement.appendChild(imgElement);
       setInnerHTML(imgContainerElement, actionHrefElement.outerHTML);
     }
@@ -91,7 +91,7 @@ export function showModal(item: Item) {
   } else {
     setTextContent(subtitleElement, subtitle);
     if (path) {
-      const imgElement = createImageModalElement(path, text);
+      const imgElement = createImageModalElement(path);
       setInnerHTML(imgContainerElement, imgElement.outerHTML);
     }
   }
