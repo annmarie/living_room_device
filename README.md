@@ -18,5 +18,4 @@ npm run dev
 | `arrow left`       | Toggle through columns to the left    |
 | `arrow up`         | Toggle up the rows                    |
 | `arrow down`       | Toggle down the rows                  |
-| `l`                | Focus the last tile in the last row   |
-
+| `l`                | Focus the last loaded tile            |
