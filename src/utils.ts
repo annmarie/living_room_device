@@ -81,6 +81,7 @@ export function determineActionPath(actionText: string): string {
 export function createActionLink(actionPath: string, itemId: string, text?: string): HTMLAnchorElement {
   const link = document.createElement('a');
   link.href = `${actionPath}?id=${itemId}`;
+  link.tabIndex = 0;
   if (text) link.textContent = text;
   return link;
 }

@@ -16,7 +16,6 @@ npm run dev
 | `esc`              | Close the modal                       |
 | `backspace`        | Close the modal                       |
 | `delete`           | Close the modal                       |
-| `tab`              | Toggle through columns to the right   |
 | `arrow right`      | Toggle through columns to the right   |
 | `arrow left`       | Toggle through columns to the left    |
 | `arrow up`         | Toggle up the rows                    |

@@ -136,13 +136,6 @@ export async function renderListPage(mainElement: HTMLElement, collections: Coll
         }
         break;
 
-      case 'Tab':
-        event.preventDefault();
-        focusedIndex = event.shiftKey
-          ? (focusedIndex - 1 + tileCount) % tileCount
-          : (focusedIndex + 1) % tileCount;
-        break;
-
       case 'h':
         event.preventDefault();
         scrollToTop();
@@ -168,7 +161,7 @@ export async function renderListPage(mainElement: HTMLElement, collections: Coll
  * @param tilesContainer - The HTML element where the tiles will be rendered.
  */
 function addTilesToContainer(items: Item[], tilesContainer: HTMLDivElement) {
-  for (const itemIndex in items ) {
+  for (const itemIndex in items) {
     const item = items[itemIndex] as Item;
     const tile = document.createElement('div') as HTMLDivElement;
     tile.classList.add('tile');
@@ -201,7 +194,6 @@ function addTilesToContainer(items: Item[], tilesContainer: HTMLDivElement) {
     }
     tile.appendChild(textContainer);
 
-    tile.tabIndex = 0;
     tile.addEventListener('click', () => {
       showModal(item);
       isModalOpen = true;
