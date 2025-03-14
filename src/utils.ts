@@ -1,3 +1,33 @@
+/**
+ * Focuses a specific tile on the page.
+ *
+ * @param index - The index of the tile to focus.
+ */
+export function focusTile(index: number) {
+  const tiles = document.querySelectorAll('.tile');
+
+  tiles.forEach((tile, i) => {
+    tile.classList.toggle('focused', i === index);
+  });
+
+  if (index >= 0 && index < tiles.length) {
+    const tile = tiles[index] as HTMLElement;
+    const tileRect = tile.getBoundingClientRect();
+    const absoluteElementTop = tileRect.top + window.pageYOffset;
+    const middle = absoluteElementTop - (window.innerHeight / 2) + (tileRect.height / 2);
+
+    window.scrollTo({
+      top: middle,
+      behavior: 'smooth',
+    });
+
+    tile.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'center',
+    });
+  }
+}
 
 /**
  * Finds the index of the next tile with the class 'first-row-tile' in a list of tiles.

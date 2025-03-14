@@ -1,7 +1,7 @@
 import { Artwork, Collection, Item } from './interfaces';
 import { fetchCollectionData } from './api';
 import { showModal, closeModal } from './modal';
-import { getNextFirstRowTileIndex, getPreviousFirstRowTileIndex, scrollToTop, setInnerHTML, setTextContent } from './utils';
+import { getNextFirstRowTileIndex, getPreviousFirstRowTileIndex, scrollToTop, setInnerHTML, setTextContent, focusTile } from './utils';
 
 let isModalOpen: boolean = false;
 let collectionsRowCount: number = 0;
@@ -210,37 +210,6 @@ function addTilesToContainer(items: Item[], tilesContainer: HTMLDivElement) {
     tilesContainer.appendChild(tile);
   }
   collectionsRowCount++;
-}
-
-/**
- * Focuses a specific tile on the page.
- *
- * @param index - The index of the tile to focus.
- */
-function focusTile(index: number) {
-  const tiles = document.querySelectorAll('.tile');
-
-  tiles.forEach((tile, i) => {
-    tile.classList.toggle('focused', i === index);
-  });
-
-  if (index >= 0 && index < tiles.length) {
-    const tile = tiles[index] as HTMLElement;
-    const tileRect = tile.getBoundingClientRect();
-    const absoluteElementTop = tileRect.top + window.pageYOffset;
-    const middle = absoluteElementTop - (window.innerHeight / 2) + (tileRect.height / 2);
-
-    window.scrollTo({
-      top: middle,
-      behavior: 'smooth',
-    });
-
-    tile.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-      inline: 'center',
-    });
-  }
 }
 
 /**
