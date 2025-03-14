@@ -30,7 +30,7 @@ export function renderHeader(headElement: HTMLElement, title: string, artwork: A
  * @param page - The name of the action page to be displayed.
  */
 export function renderActionPage(mainElement: HTMLElement, page: string) {
-  const actionMessage = document.createElement('div');
+  const actionMessage = document.createElement('div') as HTMLDivElement;
   actionMessage.className = 'action-message';
   setInnerHTML(actionMessage,
     `This is the ${page} page. Currently under construction. <a href="/">Go back to List</a>`);
@@ -50,11 +50,11 @@ export async function renderListPage(mainElement: HTMLElement, collections: Coll
   const observer = new IntersectionObserver(async (entries) => {
     for (const entry of entries) {
       if (entry.isIntersecting) {
-        const collectionId = entry.target.getAttribute('data-collection-id');
+        const collectionId = entry.target.getAttribute('data-collection-id') as string;
         if (collectionId) {
           const collection = collections.find(c => c.id === collectionId);
           if (collection && collection.items.length === 0) {
-            collection.items = await fetchCollectionData(collectionId);
+            collection.items = await fetchCollectionData(collectionId) as Item[];
             addTilesToContainer(collection.items, entry.target.querySelector('.tiles-container') as HTMLDivElement);
           }
         }
@@ -63,7 +63,7 @@ export async function renderListPage(mainElement: HTMLElement, collections: Coll
   });
 
   for (const collection of collections) {
-    const collectionDiv = document.createElement('div');
+    const collectionDiv = document.createElement('div') as HTMLDivElement;
     collectionDiv.classList.add('collection');
     collectionDiv.setAttribute('data-collection-id', collection.id);
 
@@ -72,7 +72,7 @@ export async function renderListPage(mainElement: HTMLElement, collections: Coll
     setTextContent(collectionTitle, collection.name);
     collectionDiv.appendChild(collectionTitle);
 
-    const tilesContainer = document.createElement('div');
+    const tilesContainer = document.createElement('div') as HTMLDivElement;
     tilesContainer.classList.add('tiles-container');
     collectionDiv.appendChild(tilesContainer);
     mainElement.appendChild(collectionDiv);
@@ -86,9 +86,9 @@ export async function renderListPage(mainElement: HTMLElement, collections: Coll
 
   document.addEventListener('keydown', handleKeyDown);
 
-  function handleKeyDown(event: { key: any; preventDefault: () => void; shiftKey: any; }) {
-    const tiles = document.querySelectorAll('.tile');
-    const tileCount = tiles.length;
+  function handleKeyDown(event: KeyboardEvent) {
+    const tiles = document.querySelectorAll('.tile') as NodeListOf<HTMLElement>;
+    const tileCount = tiles.length as number;
 
     switch (event.key) {
       case 'ArrowRight':
@@ -163,16 +163,16 @@ export async function renderListPage(mainElement: HTMLElement, collections: Coll
  * @param tilesContainer - The HTML element where the tiles will be rendered.
  */
 function addTilesToContainer(items: Item[], tilesContainer: HTMLDivElement) {
-  for (const itemIndex in items) {
-    const item = items[itemIndex];
-    const tile = document.createElement('div');
+  for (const itemIndex in items ) {
+    const item = items[itemIndex] as Item;
+    const tile = document.createElement('div') as HTMLDivElement;
     tile.classList.add('tile');
 
     tile.setAttribute('data-row', collectionsRowCount.toString());
     tile.setAttribute('data-column', itemIndex);
 
-    const imgContainer = document.createElement('div');
-    const imgElement = document.createElement('img');
+    const imgContainer = document.createElement('div') as HTMLDivElement;
+    const imgElement = document.createElement('img') as HTMLImageElement;
     imgContainer.classList.add('tile-image-container');
     const { path, text } = item.visuals.artwork.horizontal_tile.image;
     imgElement.src = `${path}&size=400x224&format=jpeg`;
@@ -182,9 +182,9 @@ function addTilesToContainer(items: Item[], tilesContainer: HTMLDivElement) {
     tile.appendChild(imgContainer);
 
     const { headline, subtitle } = item.visuals;
-    const textContainer = document.createElement('div');
-    const textHeadline = document.createElement('p');
-    const textSubtitle = document.createElement('p');
+    const textContainer = document.createElement('div') as HTMLDivElement;
+    const textHeadline = document.createElement('p') as HTMLParagraphElement;
+    const textSubtitle = document.createElement('p') as HTMLParagraphElement;
     textContainer.classList.add('tile-text-container');
     textHeadline.classList.add('tile-headline');
     textSubtitle.classList.add('tile-subtitle');

@@ -2,35 +2,35 @@ import { Item } from './interfaces';
 import { createActionLink, createImageModalElement, determineActionPath, getElementById, setInnerHTML, setTextContent } from './utils';
 
 export function createModal() {
-  const modal = document.createElement('div');
+  const modal = document.createElement('div') as HTMLDivElement;
   modal.id = 'modal';
   modal.classList.add('modal', 'hidden');
 
-  const modalContent = document.createElement('div');
+  const modalContent = document.createElement('div') as HTMLDivElement;
   modalContent.classList.add('modal-content');
 
-  const titleElement = document.createElement('h2');
+  const titleElement = document.createElement('h2') as HTMLHeadingElement;
   titleElement.id = 'modal-title';
 
-  const subtitleElement = document.createElement('p');
+  const subtitleElement = document.createElement('p') as HTMLParagraphElement;
   subtitleElement.id = 'modal-subtitle';
 
-  const imgContainerElement = document.createElement('p');
+  const imgContainerElement = document.createElement('p') as HTMLImageElement;
   imgContainerElement.id = 'modal-image-container';
 
-  const bodyElement = document.createElement('p');
+  const bodyElement = document.createElement('p') as HTMLParagraphElement;
   bodyElement.id = 'modal-body';
 
-  const actionTextElement = document.createElement('p');
+  const actionTextElement = document.createElement('p') as HTMLParagraphElement;
   actionTextElement.id = 'modal-action-text';
 
-  const genreNamesElement = document.createElement('p');
+  const genreNamesElement = document.createElement('p') as HTMLParagraphElement;
   genreNamesElement.id = 'modal-genre-names';
 
-  const contentContainer = document.createElement('div');
+  const contentContainer = document.createElement('div') as HTMLDivElement;
   contentContainer.classList.add('modal-content-container');
-  const leftColumn = document.createElement('div');
-  const rightColumn = document.createElement('div');
+  const leftColumn = document.createElement('div') as HTMLDivElement;
+  const rightColumn = document.createElement('div') as HTMLDivElement;
 
   leftColumn.appendChild(imgContainerElement);
   rightColumn.appendChild(titleElement);
@@ -59,13 +59,13 @@ export function closeModal() {
 }
 
 export function showModal(item: Item) {
-  const modal = getElementById('modal');
-  const titleElement = getElementById('modal-title');
-  const subtitleElement = getElementById('modal-subtitle');
+  const modal = getElementById('modal') as HTMLElement;
+  const titleElement = getElementById('modal-title') as HTMLHeadingElement;
+  const subtitleElement = getElementById('modal-subtitle') as HTMLParagraphElement;
   const imgContainerElement = getElementById('modal-image-container') as HTMLImageElement;
-  const bodyElement = getElementById('modal-body');
-  const actionTextElement = getElementById('modal-action-text');
-  const genreNamesElement = getElementById('modal-genre-names');
+  const bodyElement = getElementById('modal-body') as HTMLParagraphElement;
+  const actionTextElement = getElementById('modal-action-text') as HTMLParagraphElement;
+  const genreNamesElement = getElementById('modal-genre-names') as HTMLParagraphElement;
 
   const { headline, subtitle, body, action_text, artwork } = item.visuals;
   const { genre_names } = item.entity_metadata;
@@ -91,7 +91,7 @@ export function showModal(item: Item) {
   } else {
     setTextContent(subtitleElement, subtitle);
     if (path) {
-      const imgElement = createImageModalElement(path);
+      const imgElement = createImageModalElement(path) as HTMLImageElement;
       setInnerHTML(imgContainerElement, imgElement.outerHTML);
     }
   }
