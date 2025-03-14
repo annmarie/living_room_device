@@ -1,4 +1,5 @@
 import { Item } from './interfaces';
+import { createActionLink, createImageModalElement, determineActionPath, getElementById, setInnerHTML, setTextContent } from './utils';
 
 export function createModal() {
   const modal = document.createElement('div');
@@ -58,51 +59,42 @@ export function closeModal() {
 }
 
 export function showModal(item: Item) {
-  const modal = document.getElementById('modal') as HTMLElement;
-  const titleElement = document.getElementById('modal-title') as HTMLElement;
-  const subtitleElement = document.getElementById('modal-subtitle') as HTMLElement;
-  const imgContainerElement = document.getElementById('modal-image-container') as HTMLImageElement;
-  const bodyElement = document.getElementById('modal-body') as HTMLElement;
-  const actionTextElement = document.getElementById('modal-action-text') as HTMLElement;
-  const genreNamesElement = document.getElementById('modal-genre-names') as HTMLElement;
+  const modal = getElementById('modal');
+  const titleElement = getElementById('modal-title');
+  const subtitleElement = getElementById('modal-subtitle');
+  const imgContainerElement = getElementById('modal-image-container') as HTMLImageElement;
+  const bodyElement = getElementById('modal-body');
+  const actionTextElement = getElementById('modal-action-text');
+  const genreNamesElement = getElementById('modal-genre-names');
 
   const { headline, subtitle, body, action_text, artwork } = item.visuals;
   const { genre_names } = item.entity_metadata;
 
-  titleElement.textContent = headline;
-  genreNamesElement.textContent = genre_names.join(', ');
+  setTextContent(titleElement, headline);
+  setTextContent(genreNamesElement, genre_names.join(', '));
+  setTextContent(bodyElement, body);
 
-  const actionPath = action_text.toLowerCase().includes('watch') ? '/watch'
-    : action_text.toLowerCase().includes('browse') ? '/browse' : '';
-
+  const actionPath = determineActionPath(action_text);
   const { text, path } = artwork.vertical_tile.image;
+
   if (actionPath) {
-    const actionHrefElement = document.createElement('a');
-    actionHrefElement.href = actionPath + '?id=' + item.id;
+    const actionHrefElement = createActionLink(actionPath, item.id);
 
     if (path) {
-      const imgElement = document.createElement('img');
-      imgElement.src = `${path}&size=200x300&format=jpeg`;
-      imgElement.alt = text;
+      const imgElement = createImageModalElement(path, text);
       actionHrefElement.appendChild(imgElement);
-      imgContainerElement.innerHTML = actionHrefElement.outerHTML;
+      setInnerHTML(imgContainerElement, actionHrefElement.outerHTML);
     }
 
-    actionHrefElement.textContent = subtitle;
-    subtitleElement.innerHTML = actionHrefElement.outerHTML;
-
-    actionHrefElement.textContent = action_text;
-    actionTextElement.innerHTML = actionHrefElement.outerHTML;
+    setInnerHTML(subtitleElement, createActionLink(actionPath, item.id, subtitle).outerHTML);
+    setInnerHTML(actionTextElement, createActionLink(actionPath, item.id, action_text).outerHTML);
   } else {
-    subtitleElement.textContent = subtitle;
+    setTextContent(subtitleElement, subtitle);
     if (path) {
-      const imgElement = document.createElement('img');
-      imgElement.src = `${path}&size=200x300&format=jpeg`;
-      imgElement.alt = text;
-      imgContainerElement.innerHTML = imgElement.outerHTML;
+      const imgElement = createImageModalElement(path, text);
+      setInnerHTML(imgContainerElement, imgElement.outerHTML);
     }
   }
 
-  bodyElement.textContent = body;
   modal.classList.remove('hidden');
 }

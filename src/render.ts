@@ -1,23 +1,50 @@
 import { Artwork, Collection, Item } from './interfaces';
 import { fetchCollectionData } from './api';
 import { showModal, closeModal } from './modal';
+import { getNextFirstRowTileIndex, getPreviousFirstRowTileIndex, scrollToTop, setInnerHTML, setTextContent } from './utils';
 
 let isModalOpen: boolean = false;
 let collectionsRowCount: number = 0;
 
+/**
+ * Renders the header section of the page.
+ *
+ * @param headElement - The HTML element where the header will be rendered.
+ * @param title - The title to be displayed in the header.
+ * @param artwork - The artwork object containing the path and accent color for the header background.
+ */
 export function renderHeader(headElement: HTMLElement, title: string, artwork: Artwork) {
   const { path, accent } = artwork;
-  headElement.innerHTML = `
+  setInnerHTML(headElement, `
     <div class="header">
       <div class="header-hero" style="background-image: url('${path}&size=400x200&format=jpeg');"></div>
       <div class="header-color" style="background-color: hsl(${accent.hue} 100% 50%)"></div>
       <h1 class="header-title">${title}</h1>
-    </div>
-  `;
+    </div>`);
 }
 
-export async function renderList(mainElement: HTMLElement, collections: Collection[]) {
-  mainElement.innerHTML = '';
+/**
+ * Renders the action page based on the provided page name.
+ *
+ * @param mainElement - The HTML element where the action page will be rendered.
+ * @param page - The name of the action page to be displayed.
+ */
+export function renderActionPage(mainElement: HTMLElement, page: string) {
+  const actionMessage = document.createElement('div');
+  actionMessage.className = 'action-message';
+  setInnerHTML(actionMessage,
+    `This is the ${page} page. Currently under construction. <a href="/">Go back to List</a>`);
+  setInnerHTML(mainElement, actionMessage.outerHTML);
+}
+
+/**
+ * Renders the list page with the provided collections.
+ *
+ * @param mainElement - The HTML element where the list page will be rendered.
+ * @param collections - The collections to be displayed on the page.
+ */
+export async function renderListPage(mainElement: HTMLElement, collections: Collection[]) {
+  setInnerHTML(mainElement, '');
   let focusedIndex: number = 0;
 
   const observer = new IntersectionObserver(async (entries) => {
@@ -42,7 +69,7 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
 
     const collectionTitle = document.createElement('h2');
     collectionTitle.classList.add('collection-title');
-    collectionTitle.textContent = collection.name;
+    setTextContent(collectionTitle, collection.name);
     collectionDiv.appendChild(collectionTitle);
 
     const tilesContainer = document.createElement('div');
@@ -57,64 +84,85 @@ export async function renderList(mainElement: HTMLElement, collections: Collecti
 
   focusTile(focusedIndex);
 
-  document.addEventListener('keydown', (event) => {
-    const tiles = document.querySelectorAll('.tile');
+  document.addEventListener('keydown', handleKeyDown);
 
-    if (event.key === 'ArrowRight') {
-      event.preventDefault();
-      focusedIndex = (focusedIndex + 1) % tiles.length;
-    } else if (event.key === 'ArrowLeft') {
-      event.preventDefault();
-      focusedIndex = (focusedIndex - 1 + tiles.length) % tiles.length;
-    } else if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      const nextFirstRowTile = Array.from(tiles).slice(focusedIndex + 1).find(tile => tile.classList.contains('first-row-tile'));
-      if (nextFirstRowTile) {
-        focusedIndex = Array.from(tiles).indexOf(nextFirstRowTile);
-      }
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      const previousFirstRowTile = Array.from(tiles).slice(0, focusedIndex).reverse().find(tile => tile.classList.contains('first-row-tile'));
-      if (previousFirstRowTile) {
-        focusedIndex = Array.from(tiles).indexOf(previousFirstRowTile);
-      }
-    } else if (event.key === 'Escape') {
-      event.preventDefault();
-      if (isModalOpen) {
-        closeModal();
-        isModalOpen = false;
-      }
-    } else if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      if (isModalOpen) {
-        closeModal();
-        isModalOpen = false;
-      } else {
-        const selectedTile = tiles[focusedIndex] as HTMLElement;
-        selectedTile.click();
-      }
-    } else if (event.key === 'Tab') {
-      event.preventDefault();
-      if (event.shiftKey) {
-        focusedIndex = (focusedIndex - 1 + tiles.length) % tiles.length;
-      } else {
-        focusedIndex = (focusedIndex + 1) % tiles.length;
-      }
-    } else if (event.key === 'h') {
-      event.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      focusedIndex = 0;
-    } else if (event.key === 'l') {
-      event.preventDefault();
-      focusedIndex = tiles.length - 1;
+  function handleKeyDown(event: { key: any; preventDefault: () => void; shiftKey: any; }) {
+    const tiles = document.querySelectorAll('.tile');
+    const tileCount = tiles.length;
+
+    switch (event.key) {
+      case 'ArrowRight':
+        event.preventDefault();
+        focusedIndex = (focusedIndex + 1) % tileCount;
+        break;
+
+      case 'ArrowLeft':
+        event.preventDefault();
+        focusedIndex = (focusedIndex - 1 + tileCount) % tileCount;
+        break;
+
+      case 'ArrowDown':
+        event.preventDefault();
+        focusedIndex = getNextFirstRowTileIndex(tiles, focusedIndex);
+        break;
+
+      case 'ArrowUp':
+        event.preventDefault();
+        focusedIndex = getPreviousFirstRowTileIndex(tiles, focusedIndex);
+        break;
+
+      case 'Escape':
+        event.preventDefault();
+        if (isModalOpen) {
+          closeModal();
+          isModalOpen = false;
+        }
+        break;
+
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        if (isModalOpen) {
+          closeModal();
+          isModalOpen = false;
+        } else {
+          const selectedTile = tiles[focusedIndex] as HTMLElement;
+          selectedTile.click();
+        }
+        break;
+
+      case 'Tab':
+        event.preventDefault();
+        focusedIndex = event.shiftKey
+          ? (focusedIndex - 1 + tileCount) % tileCount
+          : (focusedIndex + 1) % tileCount;
+        break;
+
+      case 'h':
+        event.preventDefault();
+        scrollToTop();
+        break;
+
+      case 'l':
+        event.preventDefault();
+        focusedIndex = tileCount - 1;
+        break;
+
+      default:
+        return;
     }
 
     focusTile(focusedIndex);
-  });
+  }
 }
 
+/**
+ * Adds tiles to the tiles container.
+ *
+ * @param items - The items to be displayed as tiles.
+ * @param tilesContainer - The HTML element where the tiles will be rendered.
+ */
 function addTilesToContainer(items: Item[], tilesContainer: HTMLDivElement) {
-
   for (const itemIndex in items) {
     const item = items[itemIndex];
     const tile = document.createElement('div');
@@ -139,10 +187,12 @@ function addTilesToContainer(items: Item[], tilesContainer: HTMLDivElement) {
     textContainer.classList.add('tile-text-container');
     textHeadline.classList.add('tile-headline');
     textSubtitle.classList.add('tile-subtitle');
-    textHeadline.textContent = headline;
-    textSubtitle.textContent = subtitle;
+    setTextContent(textHeadline, headline);
+    setTextContent(textSubtitle, subtitle);
     textContainer.appendChild(textHeadline);
-    if (subtitle) textContainer.appendChild(textSubtitle);
+    if (subtitle) {
+      setTextContent(textSubtitle, subtitle);
+    }
     tile.appendChild(textContainer);
 
     tile.tabIndex = 0;
@@ -162,6 +212,11 @@ function addTilesToContainer(items: Item[], tilesContainer: HTMLDivElement) {
   collectionsRowCount++;
 }
 
+/**
+ * Focuses a specific tile on the page.
+ *
+ * @param index - The index of the tile to focus.
+ */
 function focusTile(index: number) {
   const tiles = document.querySelectorAll('.tile');
 
@@ -188,6 +243,12 @@ function focusTile(index: number) {
   }
 }
 
+/**
+ * Renders an error message on the page.
+ *
+ * @param mainElement - The HTML element where the error message will be rendered.
+ * @param error - The error that occurred.
+ */
 export function renderError(mainElement: HTMLElement, error: Error) {
-  mainElement.innerHTML = `<h1>Error fetching hub data</h1><p>${error.message}</p>`;
+  setInnerHTML(mainElement, `<h1>Error fetching hub data</h1><p>${error.message}</p>`);
 }

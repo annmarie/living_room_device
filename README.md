@@ -1,10 +1,22 @@
 # Living Room Device
 
-`cntl+h` will scroll you to the top of the page
+## Get Started
 
-## get started
-```
 nvm use
 npm i
 npm run dev
-```
+
+
+| Key                | Action                                |
+|--------------------|---------------------------------------|
+| `h`                | Scroll to the top of the page         |
+| `spacebar`         | Toggle modal                          |
+| `enter`            | Toggle modal                          |
+| `esc`              | Close the modal                       |
+| `tab`              | Toggle through columns to the right   |
+| `arrow right`      | Toggle through columns to the right   |
+| `arrow left`       | Toggle through columns to the left    |
+| `arrow up`         | Toggle up the rows                    |
+| `arrow down`       | Toggle down the rows                  |
+| `l`                | Focus the last tile in the last row   |
+
