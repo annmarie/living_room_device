@@ -73,9 +73,8 @@ export function setInnerHTML(element: HTMLElement, html: string) {
 
 export function determineActionPath(actionText: string): string {
   const lowerCaseActionText = actionText.toLowerCase();
-  if (lowerCaseActionText.includes('watch')) return '/watch';
   if (lowerCaseActionText.includes('browse')) return '/browse';
-  return '';
+  return '/watch';
 }
 
 export function createActionLink(actionPath: string, itemId: string, text?: string): HTMLAnchorElement {
