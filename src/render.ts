@@ -192,7 +192,7 @@ function addTilesToContainer(items: Item[], tilesContainer: HTMLDivElement) {
     setTextContent(textSubtitle, subtitle);
     textContainer.appendChild(textHeadline);
     if (subtitle) {
-      setTextContent(textSubtitle, subtitle);
+      textContainer.appendChild(textSubtitle);
     }
     tile.appendChild(textContainer);
 
