@@ -1,10 +1,11 @@
 # Living Room Device
 
 ## Get Started
-
+```
 nvm use
 npm i
 npm run dev
+```
 
 
 | Key                | Action                                |
@@ -13,6 +14,8 @@ npm run dev
 | `spacebar`         | Toggle modal                          |
 | `enter`            | Toggle modal                          |
 | `esc`              | Close the modal                       |
+| `backspace`        | Close the modal                       |
+| `delete`           | Close the modal                       |
 | `tab`              | Toggle through columns to the right   |
 | `arrow right`      | Toggle through columns to the right   |
 | `arrow left`       | Toggle through columns to the left    |

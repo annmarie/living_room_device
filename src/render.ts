@@ -112,6 +112,8 @@ export async function renderListPage(mainElement: HTMLElement, collections: Coll
         break;
 
       case 'Escape':
+      case 'Backspace':
+      case 'Delete':
         event.preventDefault();
         if (isModalOpen) {
           closeModal();
