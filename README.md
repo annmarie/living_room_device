@@ -11,8 +11,8 @@ npm run dev
 | Key                | Action                                |
 |--------------------|---------------------------------------|
 | `h`                | Scroll to the top of the page         |
+| `enter`            | Open Links                            |
 | `spacebar`         | Toggle modal                          |
-| `enter`            | Toggle modal                          |
 | `esc`              | Close the modal                       |
 | `backspace`        | Close the modal                       |
 | `delete`           | Close the modal                       |

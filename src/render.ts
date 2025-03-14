@@ -121,7 +121,6 @@ export async function renderListPage(mainElement: HTMLElement, collections: Coll
         }
         break;
 
-      case 'Enter':
       case ' ':
         event.preventDefault();
         if (isModalOpen) {
@@ -130,6 +129,8 @@ export async function renderListPage(mainElement: HTMLElement, collections: Coll
         } else {
           const selectedTile = tiles[focusedIndex] as HTMLElement;
           selectedTile.click();
+          const linkElement = document.querySelector('.modal a') as HTMLAnchorElement;
+          if (linkElement) linkElement.focus();
         }
         break;
 
