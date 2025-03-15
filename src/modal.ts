@@ -76,12 +76,13 @@ export function showModal(item: Item) {
 
   const actionPath = determineActionPath(action_text);
   const { path } = artwork.vertical_tile.image;
+  let imgElement;
 
   if (actionPath) {
     const actionHrefElement = createActionLink(actionPath, item.id);
 
     if (path) {
-      const imgElement = createImageModalElement(path);
+      imgElement = createImageModalElement(path);
       actionHrefElement.appendChild(imgElement);
       setInnerHTML(imgContainerElement, actionHrefElement.outerHTML);
     }
@@ -91,9 +92,12 @@ export function showModal(item: Item) {
   } else {
     setTextContent(subtitleElement, subtitle);
     if (path) {
-      const imgElement = createImageModalElement(path) as HTMLImageElement;
+      imgElement = createImageModalElement(path) as HTMLImageElement;
       setInnerHTML(imgContainerElement, imgElement.outerHTML);
     }
+  }
+  if (imgElement) {
+    imgElement.onerror = function () { setInnerHTML(imgContainerElement, ''); }
   }
 
   modal.classList.remove('hidden');
