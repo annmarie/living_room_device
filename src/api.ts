@@ -2,7 +2,7 @@ import { HubData, Item } from './interfaces';
 
 const CACHE_DURATION = 5 * 60 * 1000;
 
-async function fetchData<T>(url: string, cacheKey: string, key?: string): Promise<T> {
+async function fetchData<T>(url: string, cacheKey: string, parseData: CallableFunction): Promise<T> {
   const cachedData = localStorage.getItem(cacheKey);
   const cachedTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
 
@@ -17,15 +17,17 @@ async function fetchData<T>(url: string, cacheKey: string, key?: string): Promis
   const data = await response.json();
   localStorage.setItem(cacheKey, JSON.stringify(data));
   localStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
-  return (key) ? data[key] : data
+  return parseData(data);
 }
 
 export async function fetchHubData(): Promise<HubData> {
   const url = import.meta.env.VITE_HUB_URL;
-  return fetchData<HubData>(url, 'hubData');
+  const parseData = (data: HubData[]) => data;
+  return fetchData<HubData>(url, 'hubData', parseData);
 }
 
 export async function fetchCollectionData(id: string): Promise<Item[]> {
   const url = `${import.meta.env.VITE_ITEM_URL}/${id}.json`;
-  return fetchData<Item[]>(url, `collectionData_${id}`, 'items');
+  const parseData = (data: { items: Item[]; }) => data.items;
+  return fetchData<Item[]>(url, `collectionData_${id}`, parseData);
 }
