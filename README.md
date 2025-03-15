@@ -7,6 +7,11 @@ npm i
 npm run dev
 ```
 
+## Live demo
+
+https://living-room-device.onrender.com/
+
+## Keyboard commands
 
 | Key                | Action                                |
 |--------------------|---------------------------------------|
